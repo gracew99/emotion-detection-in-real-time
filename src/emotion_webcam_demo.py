@@ -12,7 +12,7 @@ face_haar_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 app = Flask(__name__)
 
 camera = cv2.VideoCapture(0)
-
+int count = 0
 def gen_frames():  # generate frame by frame from camera
     while True:
         # Capture frame by frame
@@ -38,7 +38,8 @@ def gen_frames():  # generate frame by frame from camera
         
                 emotions = ['angry', 'disgust', 'fear', 'happy', 'sad', 'surprise', 'neutral']  
                 predicted_emotion = emotions[max_index]  
-
+                if predicted_emotion == 'angry':
+                    count+=1
                 cv2.putText(frame, predicted_emotion, (int(x), int(y)), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)  
         
             resized_img = cv2.resize(frame, (1000, 700))  
@@ -53,6 +54,10 @@ def gen_frames():  # generate frame by frame from camera
 @app.route('/video_feed')
 def video_feed():
     #Video streaming route. Put this in the src attribute of an img tag
+    return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+@app.route('/audio_feed')
+def audio_feed():
     return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 

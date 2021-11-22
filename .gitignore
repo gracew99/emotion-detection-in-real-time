@@ -1,2 +1,5 @@
+*.wav
+src/data
+src/data1
 *.h5
 fer2013.csv
