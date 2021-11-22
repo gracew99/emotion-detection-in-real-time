@@ -52,57 +52,63 @@ def loading_audio_data(file):
     feature = audio_features(file, mfcc=True, chroma=True, mel=True)
     x.append(feature)
     return x
-# the file name output you want to record into
-filename = "recorded8.wav"
-# set the chunk size of 1024 samples
-chunk = 150
-# sample format
-FORMAT = pyaudio.paInt16
-# mono, change to 2 if you want stereo
-channels = 1
-# 44100 samples per second
-sample_rate = 44100
-record_seconds = 5
-# initialize PyAudio object
-p = pyaudio.PyAudio()
-# open stream object as input & output
-stream = p.open(format=FORMAT,
-                channels=channels,
-                rate=sample_rate,
-                input=True,
-                output=True,
-                frames_per_buffer=chunk)
-frames = []
-print("Recording...")
-for i in range(int(44100 / chunk * record_seconds)):
-    data = stream.read(chunk)
-    # if you want to hear your voice while recording
-    # stream.write(data)
-    frames.append(data)
-print("Finished recording.")
-# stop and close stream
-stream.stop_stream()
-stream.close()
-# terminate pyaudio object
-p.terminate()
-# save audio file
-# open the file in 'write bytes' mode
-wf = wave.open(filename, "wb")
-# set the channels
-wf.setnchannels(1)
-# set the sample format
-wf.setsampwidth(p.get_sample_size(FORMAT))
-# set the sample rate
-wf.setframerate(sample_rate)
-# write the frames as bytes
-wf.writeframes(b"".join(frames))
-# close the file
-wf.close()
+
+def gen_record():
+    # the file name output you want to record into
+    filename = "recorded15.wav"
+    # set the chunk size of 1024 samples
+    chunk = 150
+    # sample format
+    FORMAT = pyaudio.paInt16
+    # mono, change to 2 if you want stereo
+    channels = 1
+    # 44100 samples per second
+    sample_rate = 44100
+    record_seconds = 5
+    # initialize PyAudio object
+    p = pyaudio.PyAudio()
+    # open stream object as input & output
+    stream = p.open(format=FORMAT,
+                    channels=channels,
+                    rate=sample_rate,
+                    input=True,
+                    output=True,
+                    frames_per_buffer=chunk)
+    frames = []
+    print("Recording...")
+    for i in range(int(44100 / chunk * record_seconds)):
+        data = stream.read(chunk)
+        # if you want to hear your voice while recording
+        # stream.write(data)
+        frames.append(data)
+    print("Finished recording.")
+    # stop and close stream
+    stream.stop_stream()
+    stream.close()
+    # terminate pyaudio object
+    p.terminate()
+    # save audio file
+    # open the file in 'write bytes' mode
+    wf = wave.open(filename, "wb")
+    # set the channels
+    wf.setnchannels(1)
+    # set the sample format
+    wf.setsampwidth(p.get_sample_size(FORMAT))
+    # set the sample rate
+    wf.setframerate(sample_rate)
+    # write the frames as bytes
+    wf.writeframes(b"".join(frames))
+    # close the file
+    wf.close()
 
 
-wf = wave.open(filename, "rb")
-audiomodel = pickle.load(open("audiomodel.h5", 'rb'))
+    wf = wave.open(filename, "rb")
+    audiomodel = pickle.load(open("audiomodel.h5", 'rb'))
 
-X = loading_audio_data(filename)
-y_pred = audiomodel.predict(X)
-print(y_pred)
+    X = loading_audio_data(filename)
+    y_pred = audiomodel.predict(X)
+    # if y_pred == 'angry':
+    #     return 1
+    # else:
+    #     return 0
+    print(y_pred)

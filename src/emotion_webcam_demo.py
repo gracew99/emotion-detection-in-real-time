@@ -4,6 +4,7 @@ import numpy as np
 from tensorflow.keras.models import model_from_json  
 from tensorflow.keras.preprocessing import image  
 from tensorflow.keras import models
+from record import gen_record
 
 trained_model = models.load_model('../trained_models/trained_vggface.h5', compile=False)
 
@@ -12,7 +13,7 @@ face_haar_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 app = Flask(__name__)
 
 camera = cv2.VideoCapture(0)
-int count = 0
+# count = 0
 def gen_frames():  # generate frame by frame from camera
     while True:
         # Capture frame by frame
@@ -38,8 +39,9 @@ def gen_frames():  # generate frame by frame from camera
         
                 emotions = ['angry', 'disgust', 'fear', 'happy', 'sad', 'surprise', 'neutral']  
                 predicted_emotion = emotions[max_index]  
-                if predicted_emotion == 'angry':
-                    count+=1
+                # if predicted_emotion == 'angry':
+                    # count+=1
+                    # print("FACE ANGRY")
                 cv2.putText(frame, predicted_emotion, (int(x), int(y)), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)  
         
             resized_img = cv2.resize(frame, (1000, 700))  
@@ -58,8 +60,14 @@ def video_feed():
 
 @app.route('/audio_feed')
 def audio_feed():
-    return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
+    # record = gen_record()
+    # if record:
+    #     print("VOICE ANGRY")
+        # count += 1
+    return Response(gen_record(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
+# def score():
+#     return Response(count, mimetype='multipart/x-mixed-replace; boundary=frame')
 
 @app.route('/')
 def index():

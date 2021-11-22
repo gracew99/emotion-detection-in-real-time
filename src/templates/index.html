@@ -32,24 +32,33 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
           integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 
-
+    <link rel="preconnect" href="https://fonts.googleapis.com"> 
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+    <link href="https://fonts.googleapis.com/css2?family=Courgette&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+          
     <title>React App</title>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
-    <body style="background-color:#002147;">
-      <div class="parallax-content baner-content" id="home">
-          <div class="container">
-              <div class="row">
-                  <div class="col-lg-8  offset-lg-2">
-                      <h3 class="mt-5"><font color="white" style="font-family:verdana;" style="font-size:300%;"> Real Time Emotion Detection</font></h3>
-                      <img src="{{ url_for('video_feed') }}" width="100%">
-                  </div>
-              </div>
-          </div>
-      </div>
-  </body>
+      <body style="background-color:#03a1fc;">
+        <div class="parallax-content baner-content" id="home">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8  offset-lg-2">
+                        <h3 class="mt-5"><font color="white" style="margin-left:16%;font-family: Courgette, cursive;font-size:5em" style="font-size:300%;"> Calmify </font></h3>
+                        <img style="position:absolute; top:-30%;left:-75%" src="https://i.ibb.co/7NxYYm2/istockphoto-1124567572-612x612-removebg-preview.png" alt="istockphoto-1124567572-612x612-removebg-preview" border="0">
+                        <img style="position:absolute; top:55%; left: -55%" src="https://i.ibb.co/wJ7ntk4/tree.png" alt="tree" border="0">
+                        <img style="position:absolute; top:55%; right: -55%" src="https://i.ibb.co/wJ7ntk4/tree.png" alt="tree" border="0">
+                        <img style="position:absolute; bottom:-90%; left: -70%; z-index:-1; width:2000px " src="https://i.ibb.co/X760DWb/sand-removebg-preview.png" alt="sand-removebg-preview" border="0">
+                        <img src="{{ url_for('video_feed') }}" width="100%">
+                        <img src="{{ url_for('audio_feed') }}" width="0%">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
   
     <!--
       This HTML file is a template.
