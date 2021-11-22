@@ -38,9 +38,39 @@
     <link rel="stylesheet" type="text/css" href="styles.css" />
           
     <title>React App</title>
+    <script>
+      window.onload = function () {
+      
+      var chart = new CanvasJS.Chart("chartContainer", {
+        animationEnabled: true,  
+        title:{
+          text: "Anger Score over Time"
+        },
+        axisY: {
+          title: "Anger Score",
+          valueFormatString: "##,,.",
+          suffix: "",
+          prefix: ""
+        },
+        data: [{
+          type: "splineArea",
+          color: "rgba(54,158,173,.7)",
+          markerSize: 5,
+          xValueFormatString: "YYYY",
+          yValueFormatString: "##",
+        }]
+        });
+      chart.render();
+      
+      }
+      </script>
   </head>
+  
   <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
+    
+    <div id="chartContainer" style="height: 400px; width: 50%; position: absolute; top: 50%; left: 25%"></div>
+    <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+
     <div id="root"></div>
       <body style="background-color:#03a1fc;">
         <div class="parallax-content baner-content" id="home">
@@ -49,9 +79,9 @@
                     <div class="col-lg-8  offset-lg-2">
                         <h3 class="mt-5"><font color="white" style="margin-left:16%;font-family: Courgette, cursive;font-size:5em" style="font-size:300%;"> Calmify </font></h3>
                         <img style="position:absolute; top:-30%;left:-75%" src="https://i.ibb.co/7NxYYm2/istockphoto-1124567572-612x612-removebg-preview.png" alt="istockphoto-1124567572-612x612-removebg-preview" border="0">
-                        <img style="position:absolute; top:55%; left: -55%" src="https://i.ibb.co/wJ7ntk4/tree.png" alt="tree" border="0">
-                        <img style="position:absolute; top:55%; right: -55%" src="https://i.ibb.co/wJ7ntk4/tree.png" alt="tree" border="0">
-                        <img style="position:absolute; bottom:-90%; left: -70%; z-index:-1; width:2000px " src="https://i.ibb.co/X760DWb/sand-removebg-preview.png" alt="sand-removebg-preview" border="0">
+                        <img style="position:absolute; top:90%; left: -55%" src="https://i.ibb.co/wJ7ntk4/tree.png" alt="tree" border="0">
+                        <img style="position:absolute; top:90%; right: -55%" src="https://i.ibb.co/wJ7ntk4/tree.png" alt="tree" border="0">
+                        <img style="position:absolute; bottom:-120%; left: -70%; z-index:-1; width:2000px " src="https://i.ibb.co/X760DWb/sand-removebg-preview.png" alt="sand-removebg-preview" border="0">
                         <img src="{{ url_for('video_feed') }}" width="100%">
                         <img src="{{ url_for('audio_feed') }}" width="0%">
                     </div>

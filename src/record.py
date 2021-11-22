@@ -111,4 +111,4 @@ def gen_record():
     #     return 1
     # else:
     #     return 0
-    print(y_pred)
+    print("voice emotion: ", y_pred)

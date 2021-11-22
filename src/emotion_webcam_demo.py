@@ -42,7 +42,7 @@ def gen_frames():  # generate frame by frame from camera
                 # if predicted_emotion == 'angry':
                     # count+=1
                     # print("FACE ANGRY")
-                cv2.putText(frame, predicted_emotion, (int(x), int(y)), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)  
+                cv2.putText(frame, predicted_emotion, (int(x), int(y)), cv2.FONT_HERSHEY_SIMPLEX, 3, (0,0,255), 5)  
         
             resized_img = cv2.resize(frame, (1000, 700))  
             
