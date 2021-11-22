@@ -1,63 +1,65 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Sat Dec 21 02:29:44 2019
-File: emotion_webcam_demo.py
-Author: Travis Tang (Voon Hao)
-Github: https://github.com/travistangvh
-Description: Real-time Emotion Classification Demo using Webcam
-"""
-from tensorflow.keras import models
+from flask import Flask, render_template, Response
 import cv2
 import numpy as np
-from mtcnn.mtcnn import MTCNN
-import trained_models 
+from tensorflow.keras.models import model_from_json  
+from tensorflow.keras.preprocessing import image  
+from tensorflow.keras import models
 
-#Importing the model
 trained_model = models.load_model('../trained_models/trained_vggface.h5', compile=False)
-trained_model.summary()
-# prevents openCL usage and unnecessary logging messages
-cv2.ocl.setUseOpenCL(False)
-# dictionary which assigns each label an emotion (alphabetical order)
-emotion_dict = {0: "Angry", 1: "Disgust", 2: "Fear", 3: "Happy", 4: "Sad", 5: "Surprise", 6: 'Neutral'}
-detector = MTCNN()
-# start the webcam feed
-cap = cv2.VideoCapture(0)
-black = np.zeros((96,96))
 
-while True:
-    # Find haar cascade to draw bounding box around face
-    ret, frame = cap.read()
-    if not ret:
-        break
-	# detect faces in the image
-    results = detector.detect_faces(frame)
-	# extract the bounding box from the first face
-    if len(results) == 1: #len(results)==1 if there is a face detected. len ==0 if no face is detected
-        try:
-            x1, y1, width, height = results[0]['box']
-            x2, y2 = x1 + width, y1 + height
-        	# extract the face
-            face = frame[y1:y2, x1:x2]
-            #Draw a rectangle around the face
-            cv2.rectangle(frame, (x1, y1), (x1+width, y1+height), (255, 0, 0), 2)
-            # resize pixels to the model size
-            cropped_img = cv2.resize(face, (96,96)) 
-            cropped_img_expanded = np.expand_dims(cropped_img, axis=0)
-            cropped_img_float = cropped_img_expanded.astype(float)
-            prediction = trained_model.predict(cropped_img_float)
-            print(prediction)
-            maxindex = int(np.argmax(prediction))
-            cv2.putText(frame, emotion_dict[maxindex], (x1+20, y1-60), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
-        except:
-            pass
-    cv2.imshow('Video',frame)
-    try:
-        cv2.imshow("frame", cropped_img)
-    except:
-        cv2.imshow("frame", black)
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
+face_haar_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')  
 
-cap.release()
-cv2.destroyAllWindows()
+app = Flask(__name__)
 
+camera = cv2.VideoCapture(0)
+
+def gen_frames():  # generate frame by frame from camera
+    while True:
+        # Capture frame by frame
+        success, frame = camera.read()
+        if not success:
+            break
+        else:
+            color_img= cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)  
+        
+            faces_detected = face_haar_cascade.detectMultiScale(color_img, 1.32, 5)  
+            
+            for (x,y,w,h) in faces_detected:
+                cv2.rectangle(frame,(x,y),(x+w,y+h),(255,0,0),thickness=7)  
+                roi_gray=color_img[y:y+w,x:x+h]          #cropping region of interest i.e. face area from  image  
+                roi_gray=cv2.resize(roi_gray,(96,96))  
+                img_pixels = image.img_to_array(roi_gray)  
+                img_pixels = np.expand_dims(img_pixels, axis = 0)  
+                predictions = trained_model.predict(img_pixels)  
+        
+                #find max indexed array  
+                
+                max_index = np.argmax(predictions[0])  
+        
+                emotions = ['angry', 'disgust', 'fear', 'happy', 'sad', 'surprise', 'neutral']  
+                predicted_emotion = emotions[max_index]  
+
+                cv2.putText(frame, predicted_emotion, (int(x), int(y)), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)  
+        
+            resized_img = cv2.resize(frame, (1000, 700))  
+            
+            ret, buffer = cv2.imencode('.jpg', frame)
+            
+            frame = buffer.tobytes()
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')  # concat frame one by one and show result
+
+
+@app.route('/video_feed')
+def video_feed():
+    #Video streaming route. Put this in the src attribute of an img tag
+    return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
